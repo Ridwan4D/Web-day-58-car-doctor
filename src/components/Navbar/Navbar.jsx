@@ -1,7 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo.svg";
+import { useContext } from "react";
+import { AuthContext } from "../../Providers/AuthProvider";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
+  const { user, logout } = useContext(AuthContext);
   const navLinks = (
     <>
       <li>
@@ -9,12 +13,17 @@ const Navbar = () => {
       </li>
       <li>
         <NavLink to="/about">About</NavLink>
-      </li>
+      </li>{" "}
       <li>
-        <NavLink to="/login">Login</NavLink>
+        <NavLink to="/bookings">My Bookings</NavLink>
       </li>
     </>
   );
+  const handleLogout = () => {
+    logout().then(() => {
+      toast.success("Logged Out");
+    });
+  };
   return (
     <div>
       <nav className="navbar bg-base-100" id="navSide">
@@ -43,7 +52,7 @@ const Navbar = () => {
               {navLinks}
             </ul>
           </div>
-          <Link to='/' className="btn btn-ghost text-xl">
+          <Link to="/" className="btn btn-ghost text-xl">
             <img src={logo} width="70" alt="" />
           </Link>
         </div>
@@ -73,6 +82,18 @@ const Navbar = () => {
             <button className="py-2 px-2 font-medium text-[#FF3811] border-2 border-[#FF3811] bg-transparent rounded-none">
               Appointment
             </button>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="py-2 px-2 font-medium text-white border-2 border-[#FF3811] ml-2 bg-[#FF3811] rounded-none"
+              >
+                Logout
+              </button>
+            ) : (
+              <button className="py-2 px-2 font-medium text-white border-2 border-[#FF3811] ml-2 bg-[#FF3811] rounded-none">
+                <NavLink to="/login">Login</NavLink>
+              </button>
+            )}
           </div>
         </div>
       </nav>

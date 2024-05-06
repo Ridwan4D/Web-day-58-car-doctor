@@ -5,16 +5,16 @@ import { GithubAuthProvider, GoogleAuthProvider } from "firebase/auth";
 // import gitLogo from "../assets/github.png";
 import { Helmet } from "react-helmet";
 import { AuthContext } from "../Providers/AuthProvider";
+import axios from "axios";
 
 const Login = () => {
-    const {signInUser,singUpWithApp} = useContext(AuthContext)
+  const { signInUser, singUpWithApp } = useContext(AuthContext);
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
   const [inError, setInError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   // console.log(location);
-
 
   // sign up with app
   const handleAppSignIn = (provider) => {
@@ -43,9 +43,16 @@ const Login = () => {
       .then((result) => {
         console.log(result.user);
         toast.success("Logged In");
-        setTimeout(() => {
-          navigate(location?.state ? location.state : "/");
-        }, 1000);
+        // get access token
+        const user = { email };
+        axios.post('http://localhost:8000/jwt',user,{withCredentials:true})
+        .then(res => {
+          console.log(res.data);
+          setTimeout(() => {
+            navigate(location?.state ? location.state : "/");
+          }, 1000);
+        })
+        // form.reset();
       })
       .catch((error) => {
         console.log(error.message);
@@ -82,7 +89,7 @@ const Login = () => {
               className="w-full text-center py-3 my-3 border flex space-x-2 items-center justify-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow transition duration-150"
               onClick={() => handleAppSignIn(githubProvider)}
             >
-              <img src=""className="w-8 h-8 rounded-full" alt="" />{" "}
+              <img src="" className="w-8 h-8 rounded-full" alt="" />{" "}
               <span>Login with Github</span>
             </button>
           </div>
@@ -146,7 +153,7 @@ const Login = () => {
               <p className="text-center">
                 Not registered yet?{" "}
                 <Link
-                  to="/signUp"
+                  to="/register"
                   className="text-indigo-600 font-medium inline-flex space-x-1 items-center"
                 >
                   <span>Register now </span>
